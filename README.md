@@ -74,21 +74,21 @@ class Program
 <p align="center">
   <img src="Screenshots/1.jpg" alt="Описание изображения 1"/>
 </p>
-<p>
+<p align="center">
     Результат задачі 1.1 
 </p>
 
 <p align="center">
   <img src="Screenshots/2.jpg" alt="Описание изображения 2"/>
 </p>
-<p>
+<p align="center">
     Результат задачі 1.2
 </p>
 
 <p align="center">
   <img src="Screenshots/3.jpg" alt="Описание изображения 3"/>
 </p>
-<p>
+<p align="center">
     Результат задачі 2
 </p>
 
@@ -101,6 +101,6 @@ class Program
 <p align="center">
   <img src="Screenshots/6.jpg" alt="Описание изображения 6"/>
 </p>
-<p>
+<p align="center">
     Результати задачі 3 з різним часов виконання 
 </p>
