@@ -209,11 +209,14 @@ class Program
 Пряма відстань між двома точками у декартовій системі координат:
 - двовимірний простір: 
 <p align="center"">
-  d = √((x<sup>2</sup> - x<sub>1</sub>)<sup>2</sup> + (y<sup>2</sup> - y<sub>1</sub>)<sup>2</sup>)
+ d = √((x<sub>2</sub> - x<sub>1</sub>)<sup>2</sup> + 
+       (y<sub>2</sub> - y<sub>1</sub>)<sup>2</sup>)
 </p>
 - тривимірний простір: 
 <p align="center"">
- d = √((x<sup>2</sup> - x<sub>1</sub>)<sup>2</sup> + (y<sup>2</sup> - y<sub>1</sub>)<sup>2</sup> + (z<sup>2</sup> - z<sub>1</sub>)<sup>2</sup>)
+  d = √((x<sub>1</sub><sup>2</sup> - x<sub>2</sub><sup>2</sup>)<sup>2</sup> +
+       (y<sub>1</sub><sup>2</sup> - y<sub>2</sub><sup>2</sup>)<sup>2</sup> +
+       (z<sub>1</sub><sup>2</sup> - z<sub>2</sub><sup>2</sup>)<sup>2</sup>)
 </p>
 
 ```csharp
