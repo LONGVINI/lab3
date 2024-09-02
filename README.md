@@ -116,31 +116,28 @@ class Program
     static void Main()
     {
         Random random = new Random();
-
-        // Введення кількості точок
         Console.WriteLine("Enter the number of points:");
         int n = int.Parse(Console.ReadLine());
 
-        double[,] sphericalCoords = new double[n, 3]; // r, theta, phi
+        double[,] sphericalCoords = new double[n, 3]; // r, ϴ, ф
         double[,] cartesianCoords = new double[n, 3]; // x, y, z
 
-        // Генерація випадкових сферичних координат і перетворення в декартові
+        // Генерируем случайные числа
         for (int i = 0; i < n; i++)
         {
-            // Генерація випадкових значень
-            double radius = random.NextDouble() * 10; // Відстань від 0 до 10
-            double thetaInDegrees = random.NextDouble() * 360; // Азимут від 0 до 360 градусів
-            double phiInDegrees = random.NextDouble() * 180; // Полярний кут від 0 до 180 градусів
+            double radius = random.NextDouble() * 10; //расстояние
+            double thetaInDegrees = random.NextDouble() * 360; //азимут
+            double phiInDegrees = random.NextDouble() * 180; //полярный круг
 
-            double thetaInRadians = thetaInDegrees * (Math.PI / 180); // Переведення в радіани
-            double phiInRadians = phiInDegrees * (Math.PI / 180); // Переведення в радіани
+            //перевод в радианы
+            double thetaInRadians = thetaInDegrees * (Math.PI / 180);
+            double phiInRadians = phiInDegrees * (Math.PI / 180);
 
-            // Переведення в декартову систему координат
+            //перевод в декартовую
             double x = radius * Math.Sin(phiInRadians) * Math.Cos(thetaInRadians);
             double y = radius * Math.Sin(phiInRadians) * Math.Sin(thetaInRadians);
             double z = radius * Math.Cos(phiInRadians);
 
-            // Збереження координат
             sphericalCoords[i, 0] = radius;
             sphericalCoords[i, 1] = thetaInDegrees;
             sphericalCoords[i, 2] = phiInDegrees;
@@ -149,12 +146,12 @@ class Program
             cartesianCoords[i, 2] = z;
         }
 
-        // Перетворення з декартових координат назад у сферичні та перевірка
+        //Из декартовой в сферическую и проверка
         for (int i = 0; i < n; i++)
         {
             double radius = Math.Sqrt(cartesianCoords[i, 0] * cartesianCoords[i, 0] + cartesianCoords[i, 1] * cartesianCoords[i, 1] + cartesianCoords[i, 2] * cartesianCoords[i, 2]);
 
-            // Обчислення кута theta з врахуванням знаків x і y
+            //азимут
             double theta = Math.Atan(cartesianCoords[i, 1] / cartesianCoords[i, 0]) * (180 / Math.PI);
             if (cartesianCoords[i, 0] < 0)
             {
@@ -165,18 +162,17 @@ class Program
                 theta -= 180;
             }
 
-            // Обчислення кута phi
+            //полярный круг
             double phi = Math.Acos(cartesianCoords[i, 2] / radius) * (180 / Math.PI);
 
-            // Корекція кута theta в діапазоні [0, 360]
+            //коррекция угла азимута
             if (theta < 0) theta += 360;
 
-            // Перевірка коректності
+            // Проверка
             bool radiusMatch = Math.Abs(radius - sphericalCoords[i, 0]) < 1e-2;
             bool thetaMatch = Math.Abs(theta - sphericalCoords[i, 1]) < 1e-2;
             bool phiMatch = Math.Abs(phi - sphericalCoords[i, 2]) < 1e-2;
 
-            // Виведення результатів перевірки
             Console.WriteLine($"Original spherical coordinates: (r = {sphericalCoords[i, 0]:F2}, O = {sphericalCoords[i, 1]:F2} degrees, ф = {sphericalCoords[i, 2]:F2} degrees)");
             Console.WriteLine($"Calculated spherical coordinates: (r = {radius:F2}, O = {theta:F2} degrees, ф = {phi:F2} degrees)");
             Console.WriteLine($"Cartesian coordinates: (x = {cartesianCoords[i, 0]:F2}, y = {cartesianCoords[i, 1]:F2}, z = {cartesianCoords[i, 2]:F2})");
@@ -187,6 +183,7 @@ class Program
         }
     }
 }
+
 ```
 
 <p align="center">
