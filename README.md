@@ -88,6 +88,9 @@ class Program
     Результат задачі 1.1 
 </p>
 
+
+
+
 __1.2. Тривимірний простір: Декартова та сферична системи координат
 
 - Задати координати декількох точок у сферичній системі координат.
@@ -106,7 +109,84 @@ __1.2. Тривимірний простір: Декартова та сфери
 <p align="center">ф = arctan(z/r)</p>
 
 ```csharp
+using System;
 
+class Program
+{
+    static void Main()
+    {
+        Random random = new Random();
+
+        // Введення кількості точок
+        Console.WriteLine("Enter the number of points:");
+        int n = int.Parse(Console.ReadLine());
+
+        double[,] sphericalCoords = new double[n, 3]; // r, theta, phi
+        double[,] cartesianCoords = new double[n, 3]; // x, y, z
+
+        // Генерація випадкових сферичних координат і перетворення в декартові
+        for (int i = 0; i < n; i++)
+        {
+            // Генерація випадкових значень
+            double radius = random.NextDouble() * 10; // Відстань від 0 до 10
+            double thetaInDegrees = random.NextDouble() * 360; // Азимут від 0 до 360 градусів
+            double phiInDegrees = random.NextDouble() * 180; // Полярний кут від 0 до 180 градусів
+
+            double thetaInRadians = thetaInDegrees * (Math.PI / 180); // Переведення в радіани
+            double phiInRadians = phiInDegrees * (Math.PI / 180); // Переведення в радіани
+
+            // Переведення в декартову систему координат
+            double x = radius * Math.Sin(phiInRadians) * Math.Cos(thetaInRadians);
+            double y = radius * Math.Sin(phiInRadians) * Math.Sin(thetaInRadians);
+            double z = radius * Math.Cos(phiInRadians);
+
+            // Збереження координат
+            sphericalCoords[i, 0] = radius;
+            sphericalCoords[i, 1] = thetaInDegrees;
+            sphericalCoords[i, 2] = phiInDegrees;
+            cartesianCoords[i, 0] = x;
+            cartesianCoords[i, 1] = y;
+            cartesianCoords[i, 2] = z;
+        }
+
+        // Перетворення з декартових координат назад у сферичні та перевірка
+        for (int i = 0; i < n; i++)
+        {
+            double radius = Math.Sqrt(cartesianCoords[i, 0] * cartesianCoords[i, 0] + cartesianCoords[i, 1] * cartesianCoords[i, 1] + cartesianCoords[i, 2] * cartesianCoords[i, 2]);
+
+            // Обчислення кута theta з врахуванням знаків x і y
+            double theta = Math.Atan(cartesianCoords[i, 1] / cartesianCoords[i, 0]) * (180 / Math.PI);
+            if (cartesianCoords[i, 0] < 0)
+            {
+                theta += 180;
+            }
+            else if (cartesianCoords[i, 0] == 0 && cartesianCoords[i, 1] < 0)
+            {
+                theta -= 180;
+            }
+
+            // Обчислення кута phi
+            double phi = Math.Acos(cartesianCoords[i, 2] / radius) * (180 / Math.PI);
+
+            // Корекція кута theta в діапазоні [0, 360]
+            if (theta < 0) theta += 360;
+
+            // Перевірка коректності
+            bool radiusMatch = Math.Abs(radius - sphericalCoords[i, 0]) < 1e-2;
+            bool thetaMatch = Math.Abs(theta - sphericalCoords[i, 1]) < 1e-2;
+            bool phiMatch = Math.Abs(phi - sphericalCoords[i, 2]) < 1e-2;
+
+            // Виведення результатів перевірки
+            Console.WriteLine($"Original spherical coordinates: (r = {sphericalCoords[i, 0]:F2}, O = {sphericalCoords[i, 1]:F2} degrees, ф = {sphericalCoords[i, 2]:F2} degrees)");
+            Console.WriteLine($"Calculated spherical coordinates: (r = {radius:F2}, O = {theta:F2} degrees, ф = {phi:F2} degrees)");
+            Console.WriteLine($"Cartesian coordinates: (x = {cartesianCoords[i, 0]:F2}, y = {cartesianCoords[i, 1]:F2}, z = {cartesianCoords[i, 2]:F2})");
+            Console.WriteLine($"Radius match: {radiusMatch}");
+            Console.WriteLine($"Theta match: {thetaMatch}");
+            Console.WriteLine($"Phi match: {phiMatch}");
+            Console.WriteLine();
+        }
+    }
+}
 ```
 
 <p align="center">
@@ -115,6 +195,7 @@ __1.2. Тривимірний простір: Декартова та сфери
 <p align="center">
     Результат задачі 1.2
 </p>
+
 
 
 __2. Розрахунок відстаней у сферичній системі координат:
