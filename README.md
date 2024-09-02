@@ -194,7 +194,7 @@ class Program
     Результат задачі 1.2
 </p>
 
-
+<br><br><br>
 
 <strong>2. Розрахунок відстаней у сферичній системі координат:
 
@@ -208,7 +208,91 @@ class Program
 
 
 ```csharp
+using System;
 
+class Program
+{
+    static void Main()
+    {
+        Random random = new Random();
+        Console.WriteLine("Enter the number of points:");
+        int n = int.Parse(Console.ReadLine());
+
+        double[,] cartesianCoords = new double[n, 3]; // X, Y, Z
+        double[,] sphericalCoords = new double[n, 3]; // r, theta, phi
+
+        for (int i = 0; i < n; i++)
+        {
+            double x = random.NextDouble() * 20 - 10; // Від -10 до 10
+            double y = random.NextDouble() * 20 - 10; // Від -10 до 10
+            double z = random.NextDouble() * 20 - 10; // Від -10 до 10
+
+            //в сферичную
+            double radius = Math.Sqrt(x * x + y * y + z * z);
+            double theta = Math.Atan2(y, x); // Азимут
+            double phi = Math.Acos(z / radius); // Полярний кут
+
+            cartesianCoords[i, 0] = x;
+            cartesianCoords[i, 1] = y;
+            cartesianCoords[i, 2] = z;
+            sphericalCoords[i, 0] = radius;
+            sphericalCoords[i, 1] = theta;
+            sphericalCoords[i, 2] = phi;
+        }
+
+        //расчёт расстояния
+        for (int i = 0; i < n; i++)
+        {
+            int j = (i + 1) % n; // следующая точка для цикла
+
+            // декартовая
+            double distance3D = Math.Sqrt(
+                Math.Pow(cartesianCoords[j, 0] - cartesianCoords[i, 0], 2) +
+                Math.Pow(cartesianCoords[j, 1] - cartesianCoords[i, 1], 2) +
+                Math.Pow(cartesianCoords[j, 2] - cartesianCoords[i, 2], 2));
+
+            //перевод в полярную
+            double x1 = cartesianCoords[i, 0];
+            double y1 = cartesianCoords[i, 1];
+            double x2 = cartesianCoords[j, 0];
+            double y2 = cartesianCoords[j, 1];
+            double radius1 = Math.Sqrt(x1 * x1 + y1 * y1);
+            double radius2 = Math.Sqrt(x2 * x2 + y2 * y2);
+            double angle1 = Math.Atan2(y1, x1);
+            double angle2 = Math.Atan2(y2, x2);
+            double distancePolar = Math.Sqrt(Math.Pow(radius2 * Math.Cos(angle2) - radius1 * Math.Cos(angle1), 2) +
+                                             Math.Pow(radius2 * Math.Sin(angle2) - radius1 * Math.Sin(angle1), 2));
+
+            //перевод из декартовой в сферическую
+            double r1 = sphericalCoords[i, 0];
+            double theta1 = sphericalCoords[i, 1];
+            double phi1 = sphericalCoords[i, 2];
+            double r2 = sphericalCoords[j, 0];
+            double theta2 = sphericalCoords[j, 1];
+            double phi2 = sphericalCoords[j, 2];
+
+            //рассчёт по объёму сферы
+            double distance3D_sphere = Math.Sqrt(
+                Math.Pow(r1, 2) + Math.Pow(r2, 2) -
+                2 * r1 * r2 * (Math.Sin(phi1) * Math.Sin(phi2) * Math.Cos(theta2 - theta1) +
+                                Math.Cos(phi1) * Math.Cos(phi2)));
+
+            //расчёт по поверхности сферы
+            double radiusSphere = 10;
+            double surfaceDistance = radiusSphere * Math.Acos(
+                Math.Sin(phi1) * Math.Sin(phi2) * Math.Cos(theta2 - theta1) +
+                Math.Cos(phi1) * Math.Cos(phi2));
+
+            Console.WriteLine($"Point 1: (x = {cartesianCoords[i, 0]:F2}, y = {cartesianCoords[i, 1]:F2}, z = {cartesianCoords[i, 2]:F2})");
+            Console.WriteLine($"Point 2: (x = {cartesianCoords[j, 0]:F2}, y = {cartesianCoords[j, 1]:F2}, z = {cartesianCoords[j, 2]:F2})");
+            Console.WriteLine($"Distance in Cartesian coordinates: {distance3D:F2}");
+            Console.WriteLine($"Distance in Polar coordinates: {distancePolar:F2}");
+            Console.WriteLine($"Distance in spherical coordinates (volume): {distance3D_sphere:F2}");
+            Console.WriteLine($"Distance in spherical coordinates (surface): {surfaceDistance:F2}");
+            Console.WriteLine();
+        }
+    }
+}
 ```
 
 <p align="center">
@@ -217,6 +301,10 @@ class Program
 <p align="center">
     Результат задачі 2
 </p>
+
+
+
+<br><br><br>
 
 <strong>3. Бенчмарки продуктивності:
 
