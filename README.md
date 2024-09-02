@@ -211,7 +211,10 @@ class Program
 <p align="center"">
   d = √((x<sup>2</sup> - x<sub>1</sub>)<sup>2</sup> + (y<sup>2</sup> - y<sub>1</sub>)<sup>2</sup>)
 </p>
-
+- тривимірний простір: 
+<p align="center"">
+ d = √((x<sup>2</sup> - x<sub>1</sub>)<sup>2</sup> + (y<sup>2</sup> - y<sub>1</sub>)<sup>2</sup> + (z<sup>2</sup> - z<sub>1</sub>)<sup>2</sup>)
+</p>
 
 ```csharp
 using System;
