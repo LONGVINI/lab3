@@ -316,6 +316,159 @@ class Program
 
 ```csharp
 
+using System;
+using System.Diagnostics;
+
+class Program
+{
+    static void Main()
+    {
+        int numPoints = 10000; //количество точек для теста
+
+        Random random = new Random();
+
+        double[,] cartesianCoords = new double[numPoints, 3]; // X, Y, Z
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            cartesianCoords[i, 0] = random.NextDouble() * 20 - 10; // X
+            cartesianCoords[i, 1] = random.NextDouble() * 20 - 10; // Y
+            cartesianCoords[i, 2] = random.NextDouble() * 20 - 10; // Z
+        }
+
+        //измерение времени для расчета расстояний в декартовой системе координат
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        double[,] distancesCartesian = new double[numPoints, numPoints];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            for (int j = 0; j < numPoints; j++)
+            {
+                if (i != j)
+                {
+                    distancesCartesian[i, j] = Math.Sqrt(
+                        Math.Pow(cartesianCoords[j, 0] - cartesianCoords[i, 0], 2) +
+                        Math.Pow(cartesianCoords[j, 1] - cartesianCoords[i, 1], 2) +
+                        Math.Pow(cartesianCoords[j, 2] - cartesianCoords[i, 2], 2));
+                }
+            }
+        }
+
+        stopwatch.Stop();
+        Console.WriteLine($"Time for Cartesian coordinates: {stopwatch.ElapsedMilliseconds} ms");
+
+        //перевод из декартовой в полярную
+        double[,] polarCoords = new double[numPoints, 2];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            double radius = Math.Sqrt(Math.Pow(cartesianCoords[i, 0], 2) + Math.Pow(cartesianCoords[i, 1], 2));
+            double angle = Math.Atan2(cartesianCoords[i, 1], cartesianCoords[i, 0]) * (180 / Math.PI);
+            polarCoords[i, 0] = radius;
+            polarCoords[i, 1] = angle;
+        }
+
+        //измерение времени для расчета расстояний в полярной системе координат
+        stopwatch.Restart();
+        double[,] distancesPolar = new double[numPoints, numPoints];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            for (int j = 0; j < numPoints; j++)
+            {
+                if (i != j)
+                {
+                    double radius1 = polarCoords[i, 0];
+                    double radius2 = polarCoords[j, 0];
+                    double angle1 = polarCoords[i, 1] * (Math.PI / 180);
+                    double angle2 = polarCoords[j, 1] * (Math.PI / 180);
+
+                    distancesPolar[i, j] = Math.Sqrt(
+                        Math.Pow(radius2 * Math.Cos(angle2) - radius1 * Math.Cos(angle1), 2) +
+                        Math.Pow(radius2 * Math.Sin(angle2) - radius1 * Math.Sin(angle1), 2));
+                }
+            }
+        }
+
+        stopwatch.Stop();
+        Console.WriteLine($"Time for Polar coordinates: {stopwatch.ElapsedMilliseconds} ms");
+
+        //перевод декартововой в сферическую
+        double[,] sphericalCoords = new double[numPoints, 3];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            double radius = Math.Sqrt(cartesianCoords[i, 0] * cartesianCoords[i, 0] +
+                                      cartesianCoords[i, 1] * cartesianCoords[i, 1] +
+                                      cartesianCoords[i, 2] * cartesianCoords[i, 2]);
+            double theta = Math.Atan2(cartesianCoords[i, 1], cartesianCoords[i, 0]);
+            double phi = Math.Acos(cartesianCoords[i, 2] / radius);
+            sphericalCoords[i, 0] = radius;
+            sphericalCoords[i, 1] = theta;
+            sphericalCoords[i, 2] = phi;
+        }
+
+        // Измерение времени для расчета расстояний по объему сферы
+        stopwatch.Restart();
+        double[,] distancesVolume = new double[numPoints, numPoints];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            for (int j = 0; j < numPoints; j++)
+            {
+                if (i != j)
+                {
+                    double r1 = sphericalCoords[i, 0];
+                    double theta1 = sphericalCoords[i, 1];
+                    double phi1 = sphericalCoords[i, 2];
+                    double r2 = sphericalCoords[j, 0];
+                    double theta2 = sphericalCoords[j, 1];
+                    double phi2 = sphericalCoords[j, 2];
+
+                    double distanceVolume = Math.Sqrt(
+                        Math.Pow(r1, 2) + Math.Pow(r2, 2) -
+                        2 * r1 * r2 * (Math.Sin(phi1) * Math.Sin(phi2) * Math.Cos(theta2 - theta1) +
+                                        Math.Cos(phi1) * Math.Cos(phi2)));
+
+                    distancesVolume[i, j] = distanceVolume;
+                }
+            }
+        }
+
+        stopwatch.Stop();
+        Console.WriteLine($"Time for volume distance calculation: {stopwatch.ElapsedMilliseconds} ms");
+
+        //измерение времени для расчета расстояний по поверхности сферы
+        stopwatch.Restart();
+        double[,] distancesSurface = new double[numPoints, numPoints];
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            for (int j = 0; j < numPoints; j++)
+            {
+                if (i != j)
+                {
+                    double r1 = sphericalCoords[i, 0];
+                    double theta1 = sphericalCoords[i, 1];
+                    double phi1 = sphericalCoords[i, 2];
+                    double r2 = sphericalCoords[j, 0];
+                    double theta2 = sphericalCoords[j, 1];
+                    double phi2 = sphericalCoords[j, 2];
+
+                    double surfaceDistance = r1 * Math.Acos(
+                        Math.Sin(phi1) * Math.Sin(phi2) * Math.Cos(theta2 - theta1) +
+                        Math.Cos(phi1) * Math.Cos(phi2));
+
+                    distancesSurface[i, j] = surfaceDistance;
+                }
+            }
+        }
+
+        stopwatch.Stop();
+        Console.WriteLine($"Time for surface distance calculation: {stopwatch.ElapsedMilliseconds} ms");
+    }
+}
+
 ```
 
 <p align="center">
